@@ -9,6 +9,7 @@ class Command(BaseCommand):
 
     def handle(self, *args, **kwargs):
         users = User.objects.all()
+        # users = User.objects.filter(id__gt=4)
 
         for user in users:
             if user.id % 2 == 0:  # ID пользователя четный
