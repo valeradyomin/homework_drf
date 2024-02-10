@@ -1,6 +1,7 @@
 from rest_framework import viewsets, generics
 
 from materials.models import Course, Lesson
+from materials.permissions import IsModerator
 from materials.serializers import CourseSerializer, LessonSerializer
 
 
@@ -24,11 +25,13 @@ class LessonListAPIView(generics.ListAPIView):
 class LessonRetrieveAPIView(generics.RetrieveAPIView):
     serializer_class = LessonSerializer
     queryset = Lesson.objects.all()
+    permission_classes = [IsModerator]
 
 
 class LessonUpdateAPIView(generics.UpdateAPIView):
     serializer_class = LessonSerializer
     queryset = Lesson.objects.all()
+    permission_classes = [IsModerator]
 
 
 class LessonDestroyAPIView(generics.DestroyAPIView):
