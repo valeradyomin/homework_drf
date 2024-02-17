@@ -4,6 +4,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
 from materials.models import Course, Lesson, Subscription
+from materials.paginators import MaterialsPagination
 from materials.permissions import IsModerator, IsOwner
 from materials.serializers import CourseSerializer, LessonSerializer, SubscriptionSerializer
 
@@ -14,6 +15,7 @@ from materials.serializers import CourseSerializer, LessonSerializer, Subscripti
 class CourseViewSet(viewsets.ModelViewSet):
     serializer_class = CourseSerializer
     queryset = Course.objects.all()
+    pagination_class = MaterialsPagination
 
     def perform_create(self, serializer):
         serializer.save(owner=self.request.user)
@@ -47,6 +49,7 @@ class LessonCreateAPIView(generics.CreateAPIView):
 class LessonListAPIView(generics.ListAPIView):
     serializer_class = LessonSerializer
     queryset = Lesson.objects.all()
+    pagination_class = MaterialsPagination
     permission_classes = [IsModerator | IsOwner]
 
 
@@ -91,4 +94,5 @@ class SubscriptionCreateAPIView(generics.CreateAPIView):
 class SubscriptionListAPIView(generics.ListAPIView):
     serializer_class = SubscriptionSerializer
     queryset = Subscription.objects.all()
+    pagination_class = MaterialsPagination
     permission_classes = [IsAuthenticated]
