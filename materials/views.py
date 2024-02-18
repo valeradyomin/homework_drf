@@ -1,4 +1,5 @@
-from rest_framework import viewsets, generics
+from django.core.exceptions import ObjectDoesNotExist
+from rest_framework import viewsets, generics, status, serializers
 from rest_framework.generics import get_object_or_404
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
@@ -73,25 +74,36 @@ class LessonDestroyAPIView(generics.DestroyAPIView):
 class SubscriptionCreateAPIView(generics.CreateAPIView):
     serializer_class = SubscriptionSerializer
     queryset = Subscription.objects.all()
-    permission_classes = [IsOwner]
+    permission_classes = [IsAuthenticated]
 
-    def create(self, request, *args, **kwargs):
-        user = request.user
-        course_id = request.data.get('course')
-        course_item = get_object_or_404(Course, pk=course_id)
-        subscription_item = Subscription.objects.filter(user=user, course=course_item).first()
+    def perform_create(self, serializer):
+        course_id = self.kwargs.get('pk')
+        course = get_object_or_404(Course, id=course_id)
 
-        if subscription_item:
-            if subscription_item.owner == user:
-                subscription_item.delete()
-                message = 'подписка удалена'
+        new_subscription = serializer.save()
+        new_subscription.user = self.request.user
+        new_subscription.course = course
+        new_subscription.save()
+
+
+class SubscriptionDestroyAPIView(generics.DestroyAPIView):
+    queryset = Subscription.objects.all()
+    permission_classes = [IsAuthenticated]
+
+    def destroy(self, request, *args, **kwargs):
+        course_id = self.kwargs.get('pk')
+        user_id = self.request.user.pk
+
+        try:
+            subscription = Subscription.objects.get(course_id=course_id, user_id=user_id)
+            if self.request.user != subscription.user:
+                message = 'нельзя удалить чужую подписку'
+                raise serializers.ValidationError(message)
             else:
-                message = 'Вы не можете удалить подписку другого пользователя'
-        else:
-            Subscription.objects.create(user=user, course=course_item, owner=user)
-            message = 'подписка добавлена'
-
-        return Response({'message': message})
+                self.perform_destroy(subscription)
+                return Response({'message': 'подписка удалена'}, status=status.HTTP_204_NO_CONTENT)
+        except ObjectDoesNotExist:
+            return Response({'message': 'подписка не найдена'}, status=status.HTTP_404_NOT_FOUND)
 
 
 class SubscriptionListAPIView(generics.ListAPIView):

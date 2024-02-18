@@ -159,12 +159,12 @@ class SubscriptionTestCase(APITestCase):
             'course': self.course.id,
         }
 
-        response = self.client.post('/subscription/create/', data=data)
+        response = self.client.post('/subscription/create/1/', data=data)
         print(response.json())
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(
             response.json(),
-            {'message': 'подписка добавлена'}
+            {'id': 1, 'user': 1, 'course': 1}
         )
 
     def test_list_subscription(self):
@@ -180,17 +180,8 @@ class SubscriptionTestCase(APITestCase):
             'course': self.course.id,
         }
 
-        response = self.client.post('/subscription/create/', data=data)
-
-        self.assertEqual(
-            response.json(),
-            {'message': 'подписка добавлена'}
-        )
+        response = self.client.post('/subscription/create/1/', data=data)
         print(response.json())
 
-        response = self.client.post('/subscription/create/', data=data)
-        self.assertEqual(
-            response.json(),
-            {'message': 'подписка удалена'}
-        )
-        print(response.json())
+        response = self.client.delete('/subscription/delete/1/')
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
