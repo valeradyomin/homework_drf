@@ -41,11 +41,11 @@ class User(AbstractUser):
 
 
 class Payment(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='пользователь')
+    user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='пользователь', **NULLABLE)
     payment_date = models.DateField(auto_now_add=True, verbose_name='дата оплаты')
     course = models.ForeignKey(Course, on_delete=models.CASCADE, verbose_name='курс', **NULLABLE)
     lesson = models.ForeignKey(Lesson, on_delete=models.CASCADE, verbose_name='урок', **NULLABLE)
-    amount = models.PositiveIntegerField(verbose_name='стоимость')
+    amount = models.PositiveIntegerField(verbose_name='стоимость', **NULLABLE)
     payment_method = models.CharField(max_length=50, verbose_name='метод оплаты', choices=PAYMENT_CHOICES, default='card')
 
     def __str__(self):
