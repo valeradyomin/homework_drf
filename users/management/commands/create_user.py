@@ -4,7 +4,7 @@ from users.models import User
 
 class Command(BaseCommand):
     def handle(self, *args, **options):
-        user_name = 'user5'
+        user_name = 'user_new1'
         user_email = f'{user_name}@sky.pro'
         user_password = '123password'
 
