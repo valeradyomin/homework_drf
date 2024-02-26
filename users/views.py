@@ -6,7 +6,7 @@ from rest_framework.permissions import IsAuthenticated
 
 from materials.models import Course
 from users.models import User, Payment
-from users.serializers import UserSerializer, PaymentSerializer, UserProfileSerializer
+from users.serializers import UserSerializer, PaymentSerializer, UserProfileSerializer, CreatePaymentSerializer
 from rest_framework.filters import OrderingFilter
 
 
@@ -37,7 +37,7 @@ class UserProfileAPIView(generics.RetrieveAPIView):
 
 
 class PaymentCourseCreateAPIView(generics.CreateAPIView):
-    serializer_class = PaymentSerializer
+    serializer_class = CreatePaymentSerializer
     permission_classes = [IsAuthenticated]
 
     def perform_create(self, serializer):
@@ -48,4 +48,3 @@ class PaymentCourseCreateAPIView(generics.CreateAPIView):
         if user.payment_set.filter(course=course).exists():
             raise serializers.ValidationError('У вас уже есть оплаченное обучение')
         serializer.save(user=user, course=course, amount=course.price)
-
