@@ -31,7 +31,7 @@ class CreatePaymentSerializer(serializers.ModelSerializer):
             price=int(obj.course.price * 100)
         )
 
-        return result['url']
+        return result.url
 
     class Meta:
         model = Payment

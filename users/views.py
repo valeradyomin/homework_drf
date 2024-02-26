@@ -1,4 +1,3 @@
-from django.shortcuts import render
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import viewsets, generics, serializers
 from rest_framework.generics import get_object_or_404
@@ -47,4 +46,8 @@ class PaymentCourseCreateAPIView(generics.CreateAPIView):
 
         if user.payment_set.filter(course=course).exists():
             raise serializers.ValidationError('У вас уже есть оплаченное обучение')
+
+        if course.price is None:
+            raise serializers.ValidationError('У курса нет цены')
+
         serializer.save(user=user, course=course, amount=course.price)
