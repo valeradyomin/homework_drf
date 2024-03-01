@@ -31,6 +31,7 @@ class Lesson(models.Model):
     description = models.TextField(verbose_name='описание', **NULLABLE)
     image = models.ImageField(upload_to='materials/lesson/', verbose_name='картинка', **NULLABLE)
     url_video = models.URLField(verbose_name='ссылка на видео', **NULLABLE)
+    last_updated = models.DateField(auto_now=True, verbose_name='последнее обновление')
 
     def __str__(self):
         return f'{self.title}'

@@ -4,7 +4,7 @@ from users.models import User, Payment
 
 @admin.register(User)
 class AdminUser(admin.ModelAdmin):
-    list_display = ('first_name', 'last_name', 'email', 'phone', 'avatar', 'role',)
+    list_display = ('first_name', 'last_name', 'email', 'phone', 'avatar', 'role', 'is_active',)
 
 
 @admin.register(Payment)
