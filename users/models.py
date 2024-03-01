@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.utils.translation import gettext_lazy as _
 from django.contrib.auth.models import BaseUserManager
+from django.utils import timezone
 
 from materials.models import Course, Lesson
 
@@ -58,6 +59,10 @@ class User(AbstractUser):
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = []
+
+    def update_last_login(self):
+        self.last_login = timezone.now()
+        self.save(update_fields=["last_login"])
 
     class Meta:
         verbose_name = 'пользователь'
